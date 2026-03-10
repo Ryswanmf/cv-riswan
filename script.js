@@ -26,11 +26,44 @@ function createParticles() {
     }
 }
 
+// Sidebar Active Link & Smooth Scroll
+const navLinks = document.querySelectorAll('.nav-links a');
+const sections = document.querySelectorAll('section');
+
+navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Instant active state on click
+        navLinks.forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        
+        const targetId = this.getAttribute('href');
+        document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+    });
+});
+
+// Sync active link with scroll
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (pageYOffset >= (sectionTop - 250)) {
+            current = section.getAttribute('id');
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href').includes(current)) {
+            link.classList.add('active');
+        }
+    });
+});
+
 // Chart.js Implementation
 function initSkillsChart() {
     const ctx = document.getElementById('skillsChart').getContext('2d');
-    
-    // Custom Chart.js Default Config
     Chart.defaults.color = '#94a3b8';
     Chart.defaults.font.family = "'Inter', sans-serif";
 
@@ -52,25 +85,12 @@ function initSkillsChart() {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                },
-                x: {
-                    grid: { display: false }
-                }
+                y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                x: { grid: { display: false } }
             },
             plugins: {
                 legend: { display: false },
-                tooltip: {
-                    backgroundColor: '#1e293b',
-                    titleColor: '#6366f1',
-                    bodyColor: '#f1f5f9',
-                    padding: 12,
-                    cornerRadius: 10,
-                    displayColors: false
-                }
+                tooltip: { backgroundColor: '#1e293b', padding: 12, cornerRadius: 10, displayColors: false }
             }
         }
     });
